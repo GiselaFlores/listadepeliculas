@@ -1,24 +1,43 @@
-import logo from './logo.svg';
 import './App.css';
+import { useState } from 'react';
+import Template from './Template';
+import Paginado from './Paginado';
+import Pelicula from './Pelicula';
+import peliculasJson from './peliculas.json';
 
 function App() {
+
+  const [paginaActual, setPaginaActual] = useState(1);
+  const totalPorPagina = 7;
+
+  let peliculas = peliculasJson;
+
+  const cargarPeliculas = () => {peliculas = peliculas.slice((paginaActual - 1) * totalPorPagina, paginaActual * totalPorPagina);}
+
+  const getTotalPaginas = () => {
+    let cantidadTotalDePeliculas = peliculasJson.length;
+    return Math.ceil(cantidadTotalDePeliculas / totalPorPagina);
+  }
+
+  cargarPeliculas();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Template>
+
+      {peliculas.map(pelicula =>
+
+        <Pelicula titulo={pelicula.titulo} calificacion={pelicula.calificacion}
+          director={pelicula.director} actores={pelicula.actores} fecha={pelicula.fecha} duracion={pelicula.duracion}
+          img={pelicula.img} apta={pelicula.apta} descripcion={pelicula.descripcion}>
+          
+        </Pelicula>
+      )}
+
+      <Paginado pagina={paginaActual} total={getTotalPaginas()} onChange={(pagina) => {
+        setPaginaActual(pagina)
+      }} />
+
+    </Template>
   );
 }
 
